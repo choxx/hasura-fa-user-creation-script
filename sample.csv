@@ -1,0 +1,2 @@
+id,latitude,longitude,district,name,fa_username,fa_password,fa_roles,fa_user_reg_data_json,fa_user_reg_data_variables
+1,78,78,Ambala,GITI Ambala,GITI Ambala,1234,ITI,"{""iti_id"": {""id"": $data.insert_iti_one.id}}","$data.insert_iti_one.id"
