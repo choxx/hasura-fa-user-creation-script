@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  ingest:
+    build:
+      context: .
+      target: development
+    env_file:
+      - .env
+    volumes:
+      - .sample.csv:/usr/app/src/.sample.csv
