@@ -64,13 +64,14 @@ def main():
     index = 0
     header_index_map = {}
 
-    mutation = os.getenv("TABLE_MUTATION")
+    raw_mutation = os.getenv("TABLE_MUTATION")
     mutation_name = os.getenv("TABLE_MUTATION_NAME")  # we'll use this to parse response
 
     fa_dump = bool(os.getenv("FA_DUMP", 0))
     hasura_dump = bool(os.getenv("HASURA_DUMP", 0))
 
     for d in df:
+        mutation = raw_mutation
         if cnt == 0:
             # load the headers
             for k in d:
