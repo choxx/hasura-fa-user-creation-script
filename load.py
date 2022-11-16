@@ -8,23 +8,31 @@ from random import randrange
 from requests import ReadTimeout
 
 
-def user_service_create_user(username, password, roles, user_reg_data):
+def user_service_create_user(username, password, roles, district, block, role_data_user_type):
     data = {
         "registration": {
             "applicationId": f"{os.getenv('APPLICATION_ID')}",
-            "preferredLanguages": ["en"],
             "roles": roles,
-            "timezone": "Asia/Kolkata",
-            "username": username,
-            "usernameStatus": "ACTIVE",
-            "data": user_reg_data
+            "usernameStatus": "ACTIVE"
         },
         "user": {
-            "preferredLanguages": ["en"],
-            "timezone": "Asia/Kolkata",
             "usernameStatus": "ACTIVE",
             "username": username,
-            "password": password
+            "password": password,
+            "data": {
+                "FCM.token": "",
+                f"{os.getenv('APPLICATION_ID')}": {},
+                "joiningDate": "",
+                "phone": "",
+                "roleData": {
+                    "block": block,
+                    "designation": "",
+                    "district": district,
+                    "employeeID": "",
+                    "userType": role_data_user_type,
+                    "value": username
+                }
+            }
         },
     }
 
@@ -65,7 +73,7 @@ def user_service_patch_user(user_id, block, district, role_data_user_type):
     try:
         response = requests.request("PATCH", f"{url}", headers=headers, data=payload, timeout=10)
     except ReadTimeout as e:
-        return None, {"error": e}
+        return None, {"error": str(e)}
     sleep(randrange(1, 10)/10)  # sleep for random time
     if 200 <= response.status_code < 300:
         data = json.loads(response.text)
@@ -144,7 +152,7 @@ def main():
 
             # check if there is user_reg_data in CSV
             user_reg_data = {}
-            if header_index_map['fa_user_reg_data_json'] and len(d[header_index_map['fa_user_reg_data_json']]) != 0:
+            if header_index_map.get('fa_user_reg_data_json', None) is not None and len(d[header_index_map['fa_user_reg_data_json']]) != 0:
                 user_reg_data_json = d[header_index_map['fa_user_reg_data_json']]
                 # check if there are variables to replace
                 if header_index_map['fa_user_reg_data_variables'] and len(
@@ -159,8 +167,10 @@ def main():
             data, status = user_service_create_user(
                 username=d[header_index_map['fa_username']],
                 password=d[header_index_map['fa_password']],
-                user_reg_data=user_reg_data,
-                roles=roles_list
+                district=d[header_index_map['fa_district']],
+                block=d[header_index_map['fa_block']],
+                roles=roles_list,
+                role_data_user_type=d[header_index_map['fa_role_data_user_type']]
             )
             if data is not None:
                 print("For row: ", cnt, "FA Username: ", d[header_index_map['fa_username']])
