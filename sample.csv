@@ -1,2 +1,2 @@
-id,latitude,longitude,district,name,fa_username,fa_password,fa_roles,fa_user_reg_data_json,fa_user_reg_data_variables
-1,78,78,Ambala,GITI Ambala,GITI Ambala,1234,ITI,"{""iti_id"": {""id"": $data.insert_iti_one.id}}","$data.insert_iti_one.id"
+fa_district,fa_block,fa_username,fa_user_id,fa_role_data_user_type
+Hisar,Hisar - II,abrc_dobhi,0902b2d2-476e-4941-b217-b57f262eb1d8,Mentor
