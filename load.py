@@ -65,7 +65,7 @@ def user_service_patch_user(user_id, block, district, role_data_user_type):
     try:
         response = requests.request("PATCH", f"{url}", headers=headers, data=payload, timeout=10)
     except ReadTimeout as e:
-        return None, {"error": e}
+        return None, {"error": str(e)}
     sleep(randrange(1, 10)/10)  # sleep for random time
     if 200 <= response.status_code < 300:
         data = json.loads(response.text)
