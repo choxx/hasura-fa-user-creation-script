@@ -8,7 +8,7 @@ from random import randrange
 from requests import ReadTimeout
 
 
-def user_service_create_user(username, password, roles, user_reg_data):
+def user_service_create_user(username, password, roles, district, block, school_id, state='Himachal Pradesh'):
     data = {
         "registration": {
             "applicationId": f"{os.getenv('APPLICATION_ID')}",
@@ -17,16 +17,27 @@ def user_service_create_user(username, password, roles, user_reg_data):
             "timezone": "Asia/Kolkata",
             "username": username,
             "usernameStatus": "ACTIVE",
-            "data": user_reg_data
+            "data": {
+                "roleData": {
+                    "district": district,
+                    "block": block,
+                    "schoolId": '' if school_id == 'None' else school_id,
+                    "state": state
+                }
+            }
         },
         "user": {
             "preferredLanguages": ["en"],
             "timezone": "Asia/Kolkata",
             "usernameStatus": "ACTIVE",
             "username": username,
-            "password": password
+            "password": password,
+            "data": {
+                "accountName": username
+            }
         },
     }
+    print(data)
 
     payload = json.dumps(data)
     headers = {
@@ -142,24 +153,12 @@ def main():
             else:
                 roles_list = []
 
-            # check if there is user_reg_data in CSV
-            user_reg_data = {}
-            if header_index_map['fa_user_reg_data_json'] and len(d[header_index_map['fa_user_reg_data_json']]) != 0:
-                user_reg_data_json = d[header_index_map['fa_user_reg_data_json']]
-                # check if there are variables to replace
-                if header_index_map['fa_user_reg_data_variables'] and len(
-                        d[header_index_map['fa_user_reg_data_variables']]) != 0:
-                    fa_user_reg_data_variables = [i.strip() for i in
-                                                  d[header_index_map['fa_user_reg_data_variables']].split(',')]
-                    for variable in fa_user_reg_data_variables:
-                        variable_str = variable.replace('$', '')  # replace $ identifier
-                        user_reg_data_json = user_reg_data_json.replace(variable, str(get_dot_notation_var(table_data,
-                                                                                                           variable_str)))
-                        user_reg_data = json.loads(user_reg_data_json)
             data, status = user_service_create_user(
                 username=d[header_index_map['fa_username']],
                 password=d[header_index_map['fa_password']],
-                user_reg_data=user_reg_data,
+                district=d[header_index_map['fa_district']],
+                block=d[header_index_map['fa_block']],
+                school_id=d[header_index_map['fa_school_id']],
                 roles=roles_list
             )
             if data is not None:

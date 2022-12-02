@@ -1,2 +1,2 @@
-fa_district,fa_block,fa_username,fa_user_id,fa_role_data_user_type
-Hisar,Hisar - II,abrc_dobhi,0902b2d2-476e-4941-b217-b57f262eb1d8,Mentor
+fa_username,fa_district,fa_block,fa_password,fa_school_id,fa_roles
+una_amb_admin,UNA,AMB,1234abcd,,Block Admin
