@@ -8,14 +8,13 @@ from random import randrange
 from requests import ReadTimeout
 
 
-def user_service_create_user(username, password, roles, district, block, school_id, state='Himachal Pradesh'):
+def user_service_create_user(user_id, roles, district, block, school_id, state='Himachal Pradesh'):
     data = {
         "registration": {
             "applicationId": f"{os.getenv('APPLICATION_ID')}",
             "preferredLanguages": ["en"],
             "roles": roles,
             "timezone": "Asia/Kolkata",
-            "username": username,
             "usernameStatus": "ACTIVE",
             "data": {
                 "roleData": {
@@ -26,22 +25,14 @@ def user_service_create_user(username, password, roles, district, block, school_
                 }
             }
         },
-        "user": {
-            "preferredLanguages": ["en"],
-            "timezone": "Asia/Kolkata",
-            "usernameStatus": "ACTIVE",
-            "username": username,
-            "password": password,
-            "data": {
-                "accountName": username
-            }
-        },
+        "id": user_id
     }
-    print(data)
+    # print(json.dumps(data))
+    # exit(0)
 
     payload = json.dumps(data)
     headers = {
-        'Authorization': f'{os.getenv("CREATE_USER_AUTHORIZATION")}',
+        #'Authorization': f'{os.getenv("CREATE_USER_AUTHORIZATION")}',
         'x-application-id': f"{os.getenv('APPLICATION_ID')}",
         'Content-Type': 'application/json'
     }
@@ -77,7 +68,7 @@ def user_service_patch_user(user_id, block, district, role_data_user_type):
         response = requests.request("PATCH", f"{url}", headers=headers, data=payload, timeout=10)
     except ReadTimeout as e:
         return None, {"error": str(e)}
-    sleep(randrange(1, 10)/10)  # sleep for random time
+    sleep(randrange(1, 3)/10)  # sleep for random time
     if 200 <= response.status_code < 300:
         data = json.loads(response.text)
         return data, None
@@ -154,8 +145,7 @@ def main():
                 roles_list = []
 
             data, status = user_service_create_user(
-                username=d[header_index_map['fa_username']],
-                password=d[header_index_map['fa_password']],
+                user_id=d[header_index_map['fa_user_id']],
                 district=d[header_index_map['fa_district']],
                 block=d[header_index_map['fa_block']],
                 school_id=d[header_index_map['fa_school_id']],
